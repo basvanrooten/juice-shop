@@ -14,7 +14,7 @@ global.sleep = time => {
   if (time > 2000) {
     time = 2000
   }
-  const stop = new Date().getTime()
+  const stop = new Date().getTime()``
   while (new Date().getTime() < stop + time) {
     ;
   }
@@ -22,7 +22,8 @@ global.sleep = time => {
 
 module.exports = function productReviews () {
   return (req, res, next) => {
-    const id = utils.disableOnContainerEnv() ? Number(req.params.id) : req.params.id
+    // Now only number will be accepted in the param id.
+    const id = Number(req.params.id)
 
     // Measure how long the query takes to find out if an there was a nosql dos attack
     const t0 = new Date().getTime()
