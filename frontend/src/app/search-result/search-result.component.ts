@@ -46,7 +46,7 @@ export class SearchResultComponent implements AfterViewInit, OnDestroy {
   public tableData!: any[]
   public dataSource!: MatTableDataSource<TableEntry>
   public gridDataSource!: any
-  public searchValue?: SafeHtml
+  public searchValue?: string
   public confirmation?: string
   public error = undefined
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator | null = null
@@ -129,7 +129,7 @@ export class SearchResultComponent implements AfterViewInit, OnDestroy {
     if (queryParam) {
       queryParam = queryParam.trim()
       this.dataSource.filter = queryParam.toLowerCase()
-      this.searchValue = this.sanitizer.bypassSecurityTrustHtml(queryParam)
+      this.searchValue = queryParam
       this.gridDataSource.subscribe((result: any) => {
         if (result.length === 0) {
           this.emptyState = true
