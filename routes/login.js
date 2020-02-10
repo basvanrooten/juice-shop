@@ -25,8 +25,12 @@ module.exports = function login () {
   }
 
   return (req, res, next) => {
-    verifyPreLoginChallenges(req)
-    models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${insecurity.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: models.User, plain: true })
+    verifyPreLoginChallenges(req);
+
+    const emailRegex = RegExp("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/");
+    if(emailRegex.test(req.body.email)) {
+      // Good email
+      models.sequelize.query(`SELECT * FROM Users WHERE email = '${mysqlEscape(req.body.email) || ''}' AND password = '${insecurity.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: models.User, plain: true })
       .then((authenticatedUser) => {
         let user = utils.queryResultToJson(authenticatedUser)
         const rememberedEmail = insecurity.userEmailFrom(req)
@@ -54,6 +58,13 @@ module.exports = function login () {
       }).catch(error => {
         next(error)
       })
+    } else {
+      // Bad email
+      res.status(401).send(res.__('Invalid email format. Try again.'));
+      console.error("A hackerman tried to inject login query or entered in an invalid format. IP of client: " +  req.ip);
+    }
+
+
   }
 
   function verifyPreLoginChallenges (req) {
@@ -64,6 +75,17 @@ module.exports = function login () {
     utils.solveIf(challenges.dlpPasswordSprayingChallenge, () => { return req.body.email === 'J12934@' + config.get('application.domain') && req.body.password === '0Y8rMnww$*9VFYE§59-!Fg1L6t&6lB' })
     utils.solveIf(challenges.oauthUserPasswordChallenge, () => { return req.body.email === 'bjoern.kimminich@gmail.com' && req.body.password === 'bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI=' })
   }
+
+  function mysqlEscape(stringToEscape){
+    return stringToEscape
+        .replace("\\", "\\\\")
+        .replace("\'", "\\\'")
+        .replace("\"", "\\\"")
+        .replace("\n", "\\\n")
+        .replace("\r", "\\\r")
+        .replace("\x00", "\\\x00")
+        .replace("\x1a", "\\\x1a");
+}
 
   function verifyPostLoginChallenges (user) {
     utils.solveIf(challenges.loginAdminChallenge, () => { return user.data.id === users.admin.id })
