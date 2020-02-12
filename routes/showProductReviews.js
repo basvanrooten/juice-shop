@@ -14,7 +14,7 @@ global.sleep = time => {
   if (time > 2000) {
     time = 2000
   }
-  const stop = new Date().getTime()``
+  const stop = new Date().getTime()
   while (new Date().getTime() < stop + time) {
     ;
   }
