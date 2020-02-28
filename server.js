@@ -5,6 +5,7 @@
 
 const path = require('path')
 const fs = require('fs-extra')
+const accessLog = require('access-log');
 const morgan = require('morgan')
 const colors = require('colors/safe')
 const finale = require('finale-rest')
@@ -148,6 +149,7 @@ app.use(helmet.frameguard())
 
 /* Remove duplicate slashes from URL which allowed bypassing subsequent filters */
 app.use((req, res, next) => {
+  accessLog(req, res);
   req.url = req.url.replace(/[/]+/g, '/')
   next()
 })

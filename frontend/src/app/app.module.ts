@@ -128,7 +128,8 @@ import { PhotoWallService } from './Services/photo-wall.service'
 import { DeluxeUserComponent } from './deluxe-user/deluxe-user.component'
 import { AccountingGuard, AdminGuard, DeluxeGuard, LoginGuard } from './app.guard'
 import { MatPasswordStrengthModule } from '@angular-material-extensions/password-strength'
-import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SafePipe } from './pipes/safe.pipe'
 
 export function HttpLoaderFactory (http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json')
@@ -188,7 +189,8 @@ export function HttpLoaderFactory (http: HttpClient) {
     OrderHistoryComponent,
     DeliveryMethodComponent,
     PhotoWallComponent,
-    DeluxeUserComponent
+    DeluxeUserComponent,
+    SafePipe
   ],
   entryComponents: [
     ProductDetailsComponent,
@@ -284,7 +286,8 @@ export function HttpLoaderFactory (http: HttpClient) {
     WalletService,
     OrderHistoryService,
     DeliveryService,
-    PhotoWallService
+    PhotoWallService,
+    SafePipe,
   ],
   bootstrap: [AppComponent]
 })
